@@ -1,4 +1,5 @@
-"""Week 12: Monster Hunter Graphs.
+"""
+Week 12: Monster Hunter Graphs
 
 Complete each function using Python 3.11+.
 
@@ -31,7 +32,24 @@ def build_hunter_map(edges: list[tuple[str, str]]) -> dict[str, list[str]]:
         - Include every location that appears in the input.
         - Do not duplicate neighbors if the same route appears more than once.
     """
-    raise NotImplementedError
+
+    graph: dict[str, list[str]] = {}
+
+    for location_a, location_b in edges:
+
+        if location_a not in graph:
+            graph[location_a] = []
+
+        if location_b not in graph:
+            graph[location_b] = []
+
+        if location_b not in graph[location_a]:
+            graph[location_a].append(location_b)
+
+        if location_a not in graph[location_b]:
+            graph[location_b].append(location_a)
+
+    return graph
 
 
 def build_weighted_hunter_map(
@@ -54,7 +72,31 @@ def build_weighted_hunter_map(
         - If danger score is 0 or negative, raise ValueError.
         - If the same route appears more than once, keep the lowest score.
     """
-    raise NotImplementedError
+
+    graph: dict[str, dict[str, int]] = {}
+
+    for start, end, danger_score in edges:
+
+        if danger_score <= 0:
+            raise ValueError("Danger score must be positive.")
+
+        if start not in graph:
+            graph[start] = {}
+
+        if end not in graph:
+            graph[end] = {}
+
+        # Keep lowest score if duplicate route appears
+        if end not in graph[start]:
+            graph[start][end] = danger_score
+            graph[end][start] = danger_score
+
+        else:
+            lowest_score = min(graph[start][end], danger_score)
+            graph[start][end] = lowest_score
+            graph[end][start] = lowest_score
+
+    return graph
 
 
 def map_summary(graph: dict[str, list[str]]) -> dict[str, int]:
@@ -77,7 +119,18 @@ def map_summary(graph: dict[str, list[str]]) -> dict[str, int]:
 
         returns {"locations": 3, "routes": 2}
     """
-    raise NotImplementedError
+
+    locations = len(graph)
+
+    total_connections = sum(len(neighbors) for neighbors in graph.values())
+
+    # Divide by 2 because graph is undirected
+    routes = total_connections // 2
+
+    return {
+        "locations": locations,
+        "routes": routes,
+    }
 
 
 def most_connected_location(graph: dict[str, list[str]]) -> str | None:
@@ -91,7 +144,22 @@ def most_connected_location(graph: dict[str, list[str]]) -> str | None:
         If the graph is empty, return None.
         If there is a tie, return the alphabetically first location.
     """
-    raise NotImplementedError
+
+    if not graph:
+        return None
+
+    best_location = None
+    highest_connections = -1
+
+    for location in sorted(graph):
+
+        connection_count = len(graph[location])
+
+        if connection_count > highest_connections:
+            highest_connections = connection_count
+            best_location = location
+
+    return best_location
 
 
 def priority_hunt_order(reports: list[tuple[int, str]]) -> list[str]:
@@ -108,4 +176,62 @@ def priority_hunt_order(reports: list[tuple[int, str]]) -> list[str]:
     Requirement:
         Use heapq.
     """
-    raise NotImplementedError
+
+    heap: list[tuple[int, str]] = []
+
+    for priority, location in reports:
+        heapq.heappush(heap, (priority, location))
+
+    ordered_locations: list[str] = []
+
+    while heap:
+
+        priority, location = heapq.heappop(heap)
+        ordered_locations.append(location)
+
+    return ordered_locations
+
+
+# ----------------------------
+# Example Test Runs
+# ----------------------------
+if __name__ == "__main__":
+
+    route_edges = [
+        ("Old Theater", "Train Station"),
+        ("Train Station", "City Hall"),
+        ("Old Theater", "City Hall"),
+        ("Old Theater", "Train Station"),  # Duplicate route
+    ]
+
+    weighted_edges = [
+        ("Old Theater", "Train Station", 4),
+        ("Train Station", "City Hall", 2),
+        ("Old Theater", "City Hall", 7),
+        ("Old Theater", "Train Station", 1),  # Lower duplicate score
+    ]
+
+    reports = [
+        (3, "Old Theater"),
+        (1, "City Hall"),
+        (2, "Train Station"),
+    ]
+
+    hunter_map = build_hunter_map(route_edges)
+
+    weighted_map = build_weighted_hunter_map(weighted_edges)
+
+    print("=== Hunter Map ===")
+    print(hunter_map)
+
+    print("\n=== Weighted Hunter Map ===")
+    print(weighted_map)
+
+    print("\n=== Map Summary ===")
+    print(map_summary(hunter_map))
+
+    print("\n=== Most Connected Location ===")
+    print(most_connected_location(hunter_map))
+
+    print("\n=== Priority Hunt Order ===")
+    print(priority_hunt_order(reports))

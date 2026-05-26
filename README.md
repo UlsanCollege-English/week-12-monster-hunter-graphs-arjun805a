@@ -1,79 +1,99 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/80z-ZS6n)
 # Week 12: Monster Hunter Graphs
 
 ## Student
 
-Name:
+Name: Arjun Shahi
 
-Student ID:
+
+---
 
 ## Summary
 
-Write 3–6 lines explaining what this assignment does.
+This assignment builds both unweighted and weighted graph structures using Python dictionaries.  
+The locations represent monster sighting areas, while the routes represent connections between those locations.  
+The program also analyzes the graph by counting routes, finding the most connected location, and organizing monster reports using a priority queue.  
+The weighted graph stores danger scores between locations.  
+The hardest function was `build_weighted_hunter_map` because it needed validation and duplicate route handling with the lowest danger score.
 
-Example questions to answer:
-
-- What kind of graph did you build?
-- What do the locations represent?
-- What do the routes represent?
-- What was the hardest function?
+---
 
 ## Approach
 
-Explain your approach in bullets.
-
 - `build_hunter_map`:
+  - Created an undirected adjacency list.
+  - Added routes in both directions.
+  - Prevented duplicate neighbors.
+
 - `build_weighted_hunter_map`:
+  - Built a nested dictionary for weighted routes.
+  - Checked that danger scores were positive.
+  - Kept the smallest weight when duplicate routes appeared.
+
 - `map_summary`:
+  - Counted total locations using `len(graph)`.
+  - Counted all connections and divided by 2 because the graph is undirected.
+
 - `most_connected_location`:
+  - Compared neighbor counts for every location.
+  - Used alphabetical sorting to break ties.
+
 - `priority_hunt_order`:
+  - Used `heapq` as a priority queue.
+  - Returned locations from lowest priority number to highest.
+
+---
 
 ## Complexity
 
-Complete this section.
-
 ### `build_hunter_map`
 
-- Time:
-- Space:
+- Time: O(E)
+- Space: O(V + E)
 - Why:
+  - Each edge is processed once and stored in the adjacency list.
 
 ### `build_weighted_hunter_map`
 
-- Time:
-- Space:
+- Time: O(E)
+- Space: O(V + E)
 - Why:
+  - Each weighted edge is processed once and stored in the nested dictionary.
 
 ### `map_summary`
 
-- Time:
-- Space:
+- Time: O(V + E)
+- Space: O(1)
 - Why:
+  - Every neighbor list is visited once to count routes.
 
 ### `most_connected_location`
 
-- Time:
-- Space:
+- Time: O(V log V)
+- Space: O(1)
 - Why:
+  - Sorting the graph keys takes O(V log V).
 
 ### `priority_hunt_order`
 
-- Time:
-- Space:
+- Time: O(N log N)
+- Space: O(N)
 - Why:
+  - Heap insertion and removal both require logarithmic time.
+
+---
 
 ## Edge-Case Checklist
 
-Check the cases you handled.
+- [x] Empty graph
+- [x] One route
+- [x] Duplicate routes
+- [x] Disconnected locations
+- [x] Tie for most connected location
+- [x] Positive weighted routes
+- [x] Invalid zero or negative danger score
+- [x] Empty priority report list
 
-- [ ] Empty graph
-- [ ] One route
-- [ ] Duplicate routes
-- [ ] Disconnected locations
-- [ ] Tie for most connected location
-- [ ] Positive weighted routes
-- [ ] Invalid zero or negative danger score
-- [ ] Empty priority report list
+---
 
 ## Tests
 
@@ -86,17 +106,23 @@ pytest -q
 Result:
 
 ```text
-
+5 passed in 0.04s
 ```
+
+---
 
 ## Assistance & Sources
 
-AI used? Yes / No
+AI used? Yes
 
 If yes, what did it help with?
 
--
+- Helped explain graph complexity analysis.
+- Helped improve code organization and readability.
+- Helped review edge cases and documentation.
 
 Other sources used:
 
--
+- Python 3.11 documentation
+- heapq documentation
+- Course lecture notes
